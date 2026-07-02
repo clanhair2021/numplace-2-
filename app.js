@@ -730,3 +730,10 @@ const titleEl = document.getElementById('main-title');
 
         updateCounts();
         updateUndoButtonState();
+// ── PWA: Service Worker 登録 ──────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .catch(err => console.error('SW登録失敗:', err));
+  });
+}
