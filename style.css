@@ -9,21 +9,20 @@
         
         /* テーマ1: Dark Blue（ネオン調・高コントラスト） */
         :root.theme-darkblue {
-            --bg: #000000;
-            --panel: #111111;
-            --neon: #00ff41;
-            --amber: #ffaa00;
-            --cyan: #00ffff;
-            --red: #ff0055;
-            --text: #ffffff;
-            --text-bright: #ffff99;
-            --text-dim: #cccccc;
-            --dim: #555555;
-            --cell-bg: #f2f2f2;
-            --cell-fixed-bg: #c0c0c0;
-            --cell-fixed-color: #000000;
-            --cell-user-color: #333333;
-            --grid-line: #333333;
+            --bg: #060b06;
+            --panel: #0c130c;
+            --neon: #4eff91;
+            --amber: #ffcc00;
+            --cyan: #00cfff;
+            --red: #ff2244;
+            --cell-bg: #d0e8b0;
+            --cell-fixed-bg: #7ab866;
+            --cell-fixed-color: #0a2004;
+            --cell-user-color: #001a60;
+            --text: #88c878;
+            --text-bright: #d0ffd0;
+            --dim: #2e4e2e;
+            --grid-line: #060b06;
         }
 
         /* テーマ2: Folder Color（パステル調・カジュアル） */
