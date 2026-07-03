@@ -1,3 +1,4 @@
+localStorage.clear();
 const titleEl = document.getElementById('main-title');
         const grid = document.getElementById('sudoku-grid');
         const modeToggle = document.getElementById('mode-toggle');
