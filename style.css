@@ -1,339 +1,28 @@
 @font-face {
             font-family: 'NosutaruDot';
-            src: url('./fonts/Nosutaru-dotMPlusH-10-Regular.ttf') format('truetype');
+            src: url('./Nosutaru-dotMPlusH-10-Regular.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
 
-        /* ===== テーマ定義 ===== */
-        
-        /* テーマ1: Dark Blue（ネオン調・高コントラスト） */
-        :root.theme-dark-blue {
-            --bg: #000000;
-            --panel: #111111;
-            --neon: #00ff41;
-            --amber: #ffaa00;
-            --cyan: #00ffff;
-            --red: #ff0055;
-            --text: #ffffff;
-            --text-bright: #ffff99;
-            --text-dim: #cccccc;
-            --dim: #555555;
-            --cell-bg: #f2f2f2;
-            --cell-fixed-bg: #c0c0c0;
-            --cell-fixed-color: #000000;
-            --cell-user-color: #333333;
-            --grid-line: #333333;
-        }
-
-        /* テーマ2: Folder Color（パステル調・カジュアル） */
-        :root.theme-folder {
-            --bg: #1a202c;
-            --panel: #2d3748;
-            --neon: #48bb78;
-            --amber: #ed8936;
-            --cyan: #63b3ed;
-            --red: #ed64a6;
-            --text: #edf2f7;
-            --text-bright: #ffffff;
-            --text-dim: #cbd5e0;
-            --dim: #718096;
-            --cell-bg: #ffffff;
-            --cell-fixed-bg: #e2e8f0;
-            --cell-fixed-color: #1a202c;
-            --cell-user-color: #2b6cb0;
-            --grid-line: #cbd5e0;
-        }
-
-        /* デフォルトテーマ */
         :root {
             --bg: #000000;
             --panel: #111111;
-            --neon: #00ff41;
-            --amber: #ffaa00;
-            --cyan: #00ffff;
-            --red: #ff0055;
-            --text: #ffffff;
-            --text-bright: #ffff99;
-            --text-dim: #cccccc;
-            --dim: #555555;
+            --neon: #ffffff;
+            --amber: #bbbbbb;
+            --cyan: #888888;
+            --red: #ffffff;
             --cell-bg: #f2f2f2;
             --cell-fixed-bg: #c0c0c0;
             --cell-fixed-color: #000000;
             --cell-user-color: #333333;
-            --grid-line: #333333;
+            --text: #cccccc;
+            --text-bright: #ffffff;
+            --dim: #555555;
+            --grid-line: #000000;
         }
 
         * { box-sizing: border-box; }
-
-        /* 設定画面 */
-        .settings-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, var(--bg) 0%, var(--panel) 100%);
-            display: none; align-items: center; justify-content: center;
-            z-index: 10001; overflow-y: auto; padding: 20px;
-        }
-
-        .settings-content {
-            background: var(--panel); border: 3px solid var(--neon);
-            box-shadow: 8px 8px 0 var(--neon);
-            padding: 32px 28px; max-width: 360px; width: 100%;
-            text-align: center;
-            font-family: 'NosutaruDot', monospace;
-        }
-
-        .settings-title {
-            font-size: 1.8rem; color: var(--neon); margin-bottom: 24px;
-            letter-spacing: 2px;
-        }
-
-        .settings-section {
-            margin-bottom: 20px; text-align: left;
-        }
-
-        .settings-subtitle {
-            font-size: 0.75rem; color: var(--amber); margin-bottom: 12px;
-            letter-spacing: 1px;
-        }
-
-        .theme-buttons {
-            display: grid; grid-template-columns: 1fr; gap: 10px;
-        }
-
-        .theme-btn {
-            padding: 14px; font-size: 0.7rem;
-            border: 2px solid var(--dim); background: var(--bg);
-            color: var(--text); cursor: pointer; transition: all 0.05s;
-            letter-spacing: 1px; text-align: left;
-        }
-
-        .theme-btn:hover {
-            border-color: var(--neon); color: var(--neon);
-        }
-
-        .theme-btn:active { transform: translate(2px, 2px); }
-
-        .theme-btn.active {
-            border-color: var(--neon); background: var(--panel);
-            color: var(--neon); box-shadow: 0 0 8px var(--neon);
-        }
-
-        .theme-name {
-            display: block; font-weight: bold; margin-bottom: 4px;
-        }
-
-        .theme-desc {
-            display: block; font-size: 0.6rem; color: var(--dim);
-        }
-
-        .settings-btn-back {
-            width: 100%; padding: 12px; font-size: 0.7rem;
-            background: var(--bg); color: var(--cyan);
-            border: 2px solid var(--cyan); cursor: pointer;
-            letter-spacing: 1px; transition: all 0.05s;
-        }
-
-        .settings-btn-back:active { transform: translate(2px, 2px); }
-
-        /* メニュー画面 */
-        .menu-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, var(--bg) 0%, var(--panel) 100%);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 10000; overflow-y: auto; padding: 20px;
-        }
-
-        .menu-content {
-            background: var(--panel); border: 3px solid var(--neon);
-            box-shadow: 8px 8px 0 var(--neon);
-            padding: 32px 28px; max-width: 360px; width: 100%;
-            text-align: center;
-            font-family: 'NosutaruDot', monospace;
-        }
-
-        .menu-title {
-            font-size: 1.8rem; color: var(--neon); margin-bottom: 24px;
-            letter-spacing: 2px; line-height: 1.6;
-        }
-
-        .menu-section {
-            margin-bottom: 20px; text-align: left;
-        }
-
-        .menu-subtitle {
-            font-size: 0.75rem; color: var(--amber); margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
-
-        .menu-difficulty-buttons {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-        }
-
-        .menu-btn {
-            padding: 10px 8px; font-size: 0.7rem;
-            border: 2px solid var(--neon); background: var(--bg);
-            color: var(--neon); cursor: pointer; transition: all 0.05s;
-            letter-spacing: 1px;
-        }
-
-        .menu-btn:active { transform: translate(2px, 2px); }
-
-        .menu-btn.easy   { border-color: #ffffff; color: #ffffff; }
-        .menu-btn.normal { border-color: #bbbbbb; color: #bbbbbb; }
-        .menu-btn.hard   { border-color: #777777; color: #777777; }
-        .menu-btn.expert { border-color: #333333; color: #333333; background: #ffffff; }
-
-        .menu-label {
-            display: block; font-size: 0.68rem; color: var(--text);
-            padding: 8px; cursor: pointer; user-select: none;
-        }
-
-        .menu-label input[type="checkbox"] {
-            margin-right: 8px; cursor: pointer;
-        }
-
-        .menu-highscores {
-            background: var(--bg); border: 1px solid var(--dim);
-            padding: 12px; margin-bottom: 10px; font-size: 0.65rem;
-            color: var(--text); text-align: center;
-            max-height: 150px; overflow-y: auto;
-        }
-
-        .menu-score-item {
-            display: flex; justify-content: space-between;
-            padding: 4px 0; border-bottom: 1px solid var(--dim);
-        }
-
-        .menu-score-item:last-child { border-bottom: none; }
-
-        .menu-score-label { color: var(--amber); }
-        .menu-score-value { color: var(--text-bright); font-weight: bold; }
-
-        .menu-stats {
-            background: var(--bg); border: 1px solid var(--dim);
-            padding: 12px; margin-bottom: 10px; font-size: 0.62rem;
-            color: var(--text); text-align: left;
-            max-height: 200px; overflow-y: auto;
-        }
-
-        .menu-stat-row {
-            display: flex; justify-content: space-between;
-            padding: 3px 0; border-bottom: 1px solid var(--dim);
-        }
-
-        .menu-stat-row:last-child { border-bottom: none; }
-
-        .menu-stat-label { color: var(--cyan); }
-        .menu-stat-value { color: var(--text-bright); }
-
-        .menu-btn-small {
-            width: 100%; padding: 6px; font-size: 0.6rem;
-            background: var(--bg); color: var(--red);
-            border: 1px solid var(--red); cursor: pointer;
-            margin-bottom: 12px;
-        }
-
-        .menu-btn-small:active { transform: translate(1px, 1px); }
-
-        .menu-btn-start {
-            width: 100%; padding: 14px; font-size: 0.8rem;
-            background: var(--neon); color: var(--bg);
-            border: 3px solid var(--neon); cursor: pointer;
-            letter-spacing: 2px; font-weight: bold;
-            transition: all 0.05s;
-        }
-
-        .menu-btn-start:active { transform: translate(2px, 2px); }
-
-        /* ゲームコンテナ */
-        .game-container {
-            display: flex; flex-direction: column;
-        }
-
-        .control-buttons {
-            display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
-        }
-
-        .btn-menu {
-            background: var(--panel); border: 2px solid var(--cyan);
-            color: var(--cyan); box-shadow: 3px 3px 0 var(--cyan);
-        }
-
-        /* 設定画面 */
-        .settings-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, var(--bg) 0%, var(--panel) 100%);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 10001; overflow-y: auto; padding: 20px;
-        }
-
-        .settings-content {
-            background: var(--panel); border: 3px solid var(--neon);
-            box-shadow: 8px 8px 0 var(--neon);
-            padding: 32px 28px; max-width: 400px; width: 100%;
-            text-align: center;
-            font-family: 'NosutaruDot', monospace;
-        }
-
-        .settings-title {
-            font-size: 1.8rem; color: var(--neon); margin-bottom: 24px;
-            letter-spacing: 2px;
-        }
-
-        .settings-section {
-            margin-bottom: 24px; text-align: left;
-        }
-
-        .settings-subtitle {
-            font-size: 0.75rem; color: var(--amber); margin-bottom: 12px;
-            letter-spacing: 1px; text-align: center;
-        }
-
-        .theme-selector {
-            display: grid; grid-template-columns: 1fr; gap: 8px;
-        }
-
-        .theme-btn {
-            display: flex; align-items: center; gap: 12px;
-            padding: 12px 16px; background: var(--bg); border: 2px solid var(--dim);
-            color: var(--text); cursor: pointer; border-radius: 6px;
-            transition: all 0.2s ease; font-size: 0.7rem;
-            font-family: 'NosutaruDot', monospace;
-        }
-
-        .theme-btn:hover {
-            border-color: var(--amber); background: rgba(255, 170, 0, 0.1);
-        }
-
-        .theme-btn.theme-active {
-            border-color: var(--neon); background: rgba(0, 255, 65, 0.1);
-            box-shadow: 0 0 8px var(--neon);
-        }
-
-        .theme-preview {
-            width: 32px; height: 32px; border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .settings-btn-back {
-            width: 100%; padding: 12px; font-size: 0.75rem;
-            background: var(--red); color: #ffffff;
-            border: 2px solid var(--red); cursor: pointer;
-            border-radius: 6px; font-family: 'NosutaruDot', monospace;
-            transition: all 0.2s ease;
-        }
-
-        .settings-btn-back:active { transform: translate(2px, 2px); }
-
-        .menu-btn-settings {
-            width: 100%; padding: 12px; font-size: 0.75rem;
-            background: var(--bg); color: var(--amber);
-            border: 2px solid var(--amber); cursor: pointer;
-            border-radius: 6px; font-family: 'NosutaruDot', monospace;
-            transition: all 0.2s ease;
-        }
-
-        .menu-btn-settings:active { transform: translate(2px, 2px); }
 
         body {
             font-family: 'NosutaruDot', monospace;
@@ -399,40 +88,6 @@
         }
         .gen-title { font-size: 0.68rem; color: var(--text); margin-bottom: 8px; letter-spacing: 1px; }
         .gen-buttons { display: flex; justify-content: space-between; gap: 4px; }
-
-        /* ベストタイム一覧 */
-        .best-time-list {
-            display: flex; justify-content: space-between; gap: 4px;
-            margin-top: 8px;
-        }
-        .best-time-item {
-            flex: 1; font-size: 0.56rem; color: var(--dim);
-            border: 1px solid var(--dim); padding: 4px 2px;
-            text-align: center; line-height: 1.6;
-        }
-        .best-time-item .label { color: var(--amber); display: block; }
-        .best-time-item .value { color: var(--text-bright); display: block; }
-
-        /* ミス制限モードトグル */
-        .miss-mode-toggle { margin-top: 8px; }
-        .btn-miss-toggle {
-            font-family: 'NosutaruDot', monospace;
-            width: 100%; padding: 7px 0; font-size: 0.68rem;
-            background: var(--bg); color: var(--dim);
-            border: 2px solid var(--dim); cursor: pointer;
-            letter-spacing: 1px; transition: transform 0.05s;
-        }
-        .btn-miss-toggle:active { transform: translate(2px,2px); }
-        .btn-miss-toggle.on {
-            color: var(--red); border-color: var(--red);
-            box-shadow: 3px 3px 0 var(--red);
-        }
-
-        /* ミスカウンター */
-        .miss-counter {
-            margin: 6px 0; font-size: 0.7rem; color: var(--red);
-            letter-spacing: 1px;
-        }
         .btn-gen {
             font-family: 'NosutaruDot', monospace;
             flex: 1; font-size: 0.75rem; padding: 8px 2px;
@@ -488,21 +143,6 @@
         }
         .btn-pause:active { transform: translate(3px,3px); box-shadow: 0 0 0; }
 
-        .btn-hint {
-            font-family: 'NosutaruDot', monospace;
-            display: none; background: var(--panel);
-            border: 2px solid #ffaa00; color: #ffaa00;
-            box-shadow: 3px 3px 0 #ffaa00;
-            padding: 6px 10px; font-size: 0.55rem;
-            cursor: pointer; border-radius: 0;
-        }
-        .btn-hint:active { transform: translate(3px,3px); box-shadow: 0 0 0; }
-        .btn-hint:disabled {
-            opacity: 0.35; cursor: default;
-            border-color: var(--dim); color: var(--dim); box-shadow: 3px 3px 0 var(--dim);
-        }
-        .btn-hint:disabled:active { transform: none; box-shadow: 3px 3px 0 var(--dim); }
-
         .error-message {
             height: 26px; color: var(--red); font-size: 0.68rem;
             margin-bottom: 4px; text-shadow: 0 0 6px var(--red);
@@ -552,7 +192,6 @@
 
         .cell.fixed      { background-color: var(--cell-fixed-bg); }
         .cell.user-input { color: var(--cell-user-color); }
-        .cell.hint-input { background-color: #ffffaa; color: #000000; }
         .cell-value { font-family: 'NosutaruDot', monospace; font-size: 1.75rem; text-shadow: none; }
 
         /* ハイライト優先順位 */
@@ -742,45 +381,6 @@
             cursor:pointer; letter-spacing:2px;
         }
         .clear-btn-close:active { transform:translate(4px,4px); box-shadow:0 0 0; }
-
-        .best-time-update {
-            display: block; margin-top: 10px; font-size: 0.72rem;
-            color: #ffd700; letter-spacing: 1px;
-            animation: blink 0.6s step-end infinite;
-        }
-
-        /* ゲームオーバー画面 */
-        .gameover-overlay {
-            display: none; position: fixed; top:0; left:0;
-            width:100%; height:100%;
-            background: rgba(0,0,0,0.98);
-            z-index:9999; flex-direction:column;
-            align-items:center; justify-content:center; overflow:hidden;
-        }
-        .gameover-content {
-            animation: popUp 0.3s step-end;
-            padding: 28px; background: var(--panel);
-            border: 3px solid var(--red);
-            box-shadow: 8px 8px 0 var(--red);
-            max-width: 290px; z-index:10001; position:relative; text-align:center;
-        }
-        .gameover-title {
-            font-size: 2.1rem; color: var(--red);
-            margin-bottom: 16px;
-            text-shadow: 2px 0 0 var(--red), 0 2px 0 var(--red);
-            letter-spacing: 4px;
-            animation: blink 0.5s step-end infinite;
-        }
-        .gameover-msg { font-size:0.78rem; margin-bottom:22px; line-height:2.4; color:var(--text); }
-        .gameover-btn-retry {
-            font-family:'NosutaruDot', monospace;
-            padding:10px 22px; font-size:0.78rem;
-            background:var(--panel); color:var(--red);
-            border:2px solid var(--red);
-            box-shadow:4px 4px 0 var(--red);
-            cursor:pointer; letter-spacing:2px;
-        }
-        .gameover-btn-retry:active { transform:translate(4px,4px); box-shadow:0 0 0; }
 
         @keyframes popUp { 0% { transform:scale(0.5); opacity:0; } 100% { transform:scale(1); opacity:1; } }
         @keyframes blink  { 50% { opacity:0; } }

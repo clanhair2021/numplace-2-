@@ -4,123 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>美容室CLanからの挑戦状</title>
+    <!-- PWA 設定 -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CLan数独">
+    <link rel="apple-touch-icon" href="./icon-192.jpg">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- 設定画面 -->
-    <div class="settings-overlay" id="settings-screen">
-        <div class="settings-content">
-            <h1 class="settings-title">設定</h1>
-            
-            <div class="settings-section">
-                <div class="settings-subtitle">テーマを選択</div>
-                <div class="theme-buttons">
-                    <button class="theme-btn" id="theme-darkblue" onclick="setTheme('darkblue')">
-                        <span class="theme-name">Dark Blue</span>
-                        <span class="theme-desc">ネオン調</span>
-                    </button>
-                    <button class="theme-btn" id="theme-foldercolor" onclick="setTheme('foldercolor')">
-                        <span class="theme-name">Folder Color</span>
-                        <span class="theme-desc">パステル調</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <button class="settings-btn-back" onclick="backToMenuFromSettings()">メニューに戻る</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- メニュー画面 -->
-    <div class="menu-overlay" id="menu-screen">
-        <div class="menu-content">
-            <h1 class="menu-title">美容室CLan<br>からの挑戦状</h1>
-            
-            <div class="menu-section">
-                <div class="menu-subtitle">難易度を選択</div>
-                <div class="menu-difficulty-buttons">
-                    <button class="menu-btn easy" onclick="startGameWithDifficulty('easy')">初級</button>
-                    <button class="menu-btn normal" onclick="startGameWithDifficulty('normal')">中級</button>
-                    <button class="menu-btn hard" onclick="startGameWithDifficulty('hard')">上級</button>
-                    <button class="menu-btn expert" onclick="startGameWithDifficulty('expert')">最高級</button>
-                </div>
-            </div>
-
-            <div class="menu-section">
-                <label class="menu-label">
-                    <input type="checkbox" id="menu-miss-mode" onchange="updateMenuSettings()">
-                    ミス制限モード（3ミスでゲームオーバー）
-                </label>
-            </div>
-
-            <div class="menu-section">
-                <div class="menu-subtitle">ハイスコア</div>
-                <div class="menu-highscores" id="menu-highscores"></div>
-            </div>
-
-            <div class="menu-section">
-                <div class="menu-subtitle">統計情報</div>
-                <div class="menu-stats" id="menu-stats"></div>
-                <button class="menu-btn-small" onclick="resetAllStats()">統計情報をリセット</button>
-            </div>
-
-            <div class="menu-section">
-                <button class="menu-btn-small" onclick="openSettings()">⚙️ 設定</button>
-            </div>
-
-            <div class="menu-section">
-                <button class="menu-btn-start" onclick="closeMenuAndStartGame()">ゲームを開始</button>
-            </div>
-
-            <div class="menu-section">
-                <button class="menu-btn-small" onclick="openSettings()">⚙️ 設定</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 設定画面 -->
-    <div class="settings-overlay" id="settings-screen" style="display:none;">
-        <div class="settings-content">
-            <h2 class="settings-title">⚙️ 設定</h2>
-            
-            <div class="settings-section">
-                <div class="settings-subtitle">テーマ選択</div>
-                <div class="theme-selector" id="theme-selector"></div>
-            </div>
-
-            <div class="settings-section">
-                <button class="settings-btn-back" onclick="closeSettingsMenu()">メニューに戻る</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ゲーム画面 -->
-    <div class="game-container" id="game-container" style="display:none;">
-
     <h1 id="main-title">美容室CLan<br>からの挑戦状</h1>
     
     <div class="controls">
-        <div class="control-buttons">
+        <div>
             <button class="btn" id="mode-toggle">問題を確定してプレイ開始</button>
             <button class="btn btn-undo" id="btn-undo" disabled>戻す</button>
             <button class="btn btn-reset" id="btn-reset">リセット</button>
             <button class="btn btn-clear" id="btn-clear">全部消去</button>
-            <button class="btn btn-menu" id="btn-menu" onclick="backToMenu()">メニュー</button>
         </div>
 
-        <div class="gen-area" id="gen-area" style="display:none;">
+        <div class="gen-area" id="gen-area">
             <div class="gen-title">-- 自動生成  難易度選択 --</div>
             <div class="gen-buttons">
                 <button class="btn-gen easy" onclick="generateSudoku('easy')">初級</button>
                 <button class="btn-gen normal" onclick="generateSudoku('normal')">中級</button>
                 <button class="btn-gen hard" onclick="generateSudoku('hard')">上級</button>
                 <button class="btn-gen expert" onclick="generateSudoku('expert')">最高級</button>
-            </div>
-            <div class="best-time-list" id="best-time-list"></div>
-            <div class="miss-mode-toggle">
-                <button class="btn-miss-toggle" id="btn-miss-toggle" onclick="toggleMissLimitMode()">ミス制限モード: OFF</button>
             </div>
         </div>
 
@@ -133,13 +44,10 @@
         </div>
 
         <div class="mode-status" id="mode-text">MODE: 問題を入力中</div>
-
-        <div class="miss-counter" id="miss-counter" style="display:none;">MISS: <span id="miss-count">0</span> / <span id="miss-max">3</span></div>
         
         <div class="timer-container">
             <div class="timer" id="timer-display">00:00</div>
             <button class="btn btn-pause" id="btn-pause" onclick="pauseGame()">PAUSE</button>
-            <button class="btn btn-hint" id="btn-hint" onclick="useHint()" style="display:none;">ヒント: <span id="hint-count">0</span>/<span id="hint-max">3</span></button>
         </div>
         
         <div class="error-message" id="error-text"></div>
@@ -198,25 +106,10 @@
                 おめでとうございます！<br>
                 素晴らしいロジックでした！<br>
                 タイム: <span id="final-time" style="color: #ffffff; font-size: 0.9rem; display: block; margin-top: 12px;">00:00</span>
-                <span id="best-time-update" class="best-time-update" style="display:none;">🏆 ベストタイム更新！</span>
             </div>
             <button class="clear-btn-close" onclick="closeClearScreen()">CLOSE</button>
         </div>
     </div>
-
-    <div class="gameover-overlay" id="gameover-screen">
-        <div class="gameover-content">
-            <div class="gameover-title">GAME OVER</div>
-            <div class="gameover-msg">
-                ミスが上限に達しました…<br>
-                また挑戦してみましょう！<br>
-                タイム: <span id="gameover-time" style="color: #ffffff; font-size: 0.9rem; display: block; margin-top: 12px;">00:00</span>
-            </div>
-            <button class="gameover-btn-retry" onclick="retryAfterGameOver()">もう一度</button>
-        </div>
-    </div>
-
-    </div><!-- game-container 終了 -->
     <script src="app.js"></script>
 </body>
 </html>

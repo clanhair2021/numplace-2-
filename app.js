@@ -16,683 +16,11 @@ const titleEl = document.getElementById('main-title');
         const finalTimeSpan = document.getElementById('final-time');
         const loadModal = document.getElementById('load-modal');
         const modalSaveList = document.getElementById('modal-save-list');
-        const bestTimeList = document.getElementById('best-time-list');
-        const btnMissToggle = document.getElementById('btn-miss-toggle');
-        const missCounterEl = document.getElementById('miss-counter');
-        const missCountSpan = document.getElementById('miss-count');
-        const missMaxSpan = document.getElementById('miss-max');
-        const bestTimeUpdateSpan = document.getElementById('best-time-update');
-        const gameoverScreen = document.getElementById('gameover-screen');
-        const gameoverTimeSpan = document.getElementById('gameover-time');
-        const btnHint = document.getElementById('btn-hint');
-        const hintCountSpan = document.getElementById('hint-count');
-        const hintMaxSpan = document.getElementById('hint-max');
-        const menuScreen = document.getElementById('menu-screen');
-        const gameContainer = document.getElementById('game-container');
-        const btnMenu = document.getElementById('btn-menu');
-        const menuHighscores = document.getElementById('menu-highscores');
-        const menuStats = document.getElementById('menu-stats');
-        const menuMissMode = document.getElementById('menu-miss-mode');
-        const settingsScreen = document.getElementById('settings-screen');
         
         let selectedCell = null;
         let isPlayMode = false;
         let isPaused = false;
         const cellsArray = [];
-
-        // ===== ベストタイム記録・ミス制限モード =====
-        const DIFFICULTY_LABELS = { easy: '初級', normal: '中級', hard: '上級', expert: '最高級' };
-        const MISS_LIMIT = 3;
-        const BEST_TIME_KEY = 'sudoku_best_times_v1';
-        const MISS_MODE_KEY = 'sudoku_miss_mode_v1';
-        const STATS_KEY = 'sudoku_stats_v1';
-
-        let currentDifficulty = null; // 自動生成時のみセットされる（'easy'|'normal'|'hard'|'expert'）
-        let missLimitMode = localStorage.getItem(MISS_MODE_KEY) === 'on';
-        let missCount = 0;
-        let currentPlayStartTime = 0; // クリア時間計算用
-
-        // ===== テーマシステム =====
-        const THEME_KEY = 'sudoku_theme_v1';
-        const THEMES = {
-            darkblue: {
-                name: 'Dark Blue',
-                colors: {
-                    bg: '#1a1a2e',
-                    panel: '#16213e',
-                    text: '#ffffff',
-                    textBright: '#ffff99',
-                    textDim: '#cccccc',
-                    dim: '#666666',
-                    neon: '#00ff41',
-                    cyan: '#00ffff',
-                    amber: '#ffaa00',
-                    red: '#ff0055',
-                    cellBg: '#ffffff',
-                    cellFixedBg: '#eeeeee',
-                    cellFixedColor: '#000000',
-                    cellUserColor: '#0055ff',
-                    primary: '#3182ce',
-                    accent: '#dd6b20',
-                    success: '#38a169',
-                    danger: '#e53e3e'
-                }
-            },
-            foldercolor: {
-                name: 'Folder Color',
-                colors: {
-                    bg: '#f5e6d3',
-                    panel: '#ead5b8',
-                    text: '#3d2817',
-                    textBright: '#5a3a2a',
-                    textDim: '#8b6f47',
-                    dim: '#a89968',
-                    neon: '#d4841f',
-                    cyan: '#b8860b',
-                    amber: '#cd8500',
-                    red: '#c63a2d',
-                    cellBg: '#fff9f0',
-                    cellFixedBg: '#e8d5bc',
-                    cellFixedColor: '#3d2817',
-                    cellUserColor: '#b8860b',
-                    primary: '#cd8500',
-                    accent: '#d4841f',
-                    success: '#b8860b',
-                    danger: '#c63a2d'
-                }
-            },
-            sakura: {
-                name: 'Sakura Pink',
-                colors: {
-                    bg: '#fef5f7',
-                    panel: '#fde8ed',
-                    text: '#4a2d42',
-                    textBright: '#6b4a62',
-                    textDim: '#8b6a82',
-                    dim: '#a88a9f',
-                    neon: '#e565a6',
-                    cyan: '#e67ba8',
-                    amber: '#f4a0c8',
-                    red: '#d85a7f',
-                    cellBg: '#fffbfd',
-                    cellFixedBg: '#f5e5ed',
-                    cellFixedColor: '#4a2d42',
-                    cellUserColor: '#e565a6',
-                    primary: '#e565a6',
-                    accent: '#f4a0c8',
-                    success: '#d85a7f',
-                    danger: '#c73368'
-                }
-            },
-            matcha: {
-                name: 'Matcha Green',
-                colors: {
-                    bg: '#f0f7f0',
-                    panel: '#e3f0e3',
-                    text: '#2d4a2d',
-                    textBright: '#4a6a4a',
-                    textDim: '#6b8a6b',
-                    dim: '#8aaa8a',
-                    neon: '#4caf50',
-                    cyan: '#66bb6a',
-                    amber: '#81c784',
-                    red: '#d32f2f',
-                    cellBg: '#fafbfa',
-                    cellFixedBg: '#e8f3e8',
-                    cellFixedColor: '#2d4a2d',
-                    cellUserColor: '#4caf50',
-                    primary: '#4caf50',
-                    accent: '#66bb6a',
-                    success: '#4caf50',
-                    danger: '#d32f2f'
-                }
-            },
-            lavender: {
-                name: 'Lavender',
-                colors: {
-                    bg: '#f5f3f9',
-                    panel: '#ede9f5',
-                    text: '#3d2959',
-                    textBright: '#5a4a7a',
-                    textDim: '#7a6a9a',
-                    dim: '#9a8aba',
-                    neon: '#9b59b6',
-                    cyan: '#b695d4',
-                    amber: '#c9a8e4',
-                    red: '#d4366d',
-                    cellBg: '#fdfbfe',
-                    cellFixedBg: '#ede9f5',
-                    cellFixedColor: '#3d2959',
-                    cellUserColor: '#9b59b6',
-                    primary: '#9b59b6',
-                    accent: '#b695d4',
-                    success: '#7e57c2',
-                    danger: '#d4366d'
-                }
-            },
-            ocean: {
-                name: 'Ocean Blue',
-                colors: {
-                    bg: '#ecf5fb',
-                    panel: '#dce9f5',
-                    text: '#1a3a52',
-                    textBright: '#2a5a8a',
-                    textDim: '#4a7aaa',
-                    dim: '#6a9aca',
-                    neon: '#0066cc',
-                    cyan: '#0099ff',
-                    amber: '#ff9900',
-                    red: '#ff3333',
-                    cellBg: '#f5fafd',
-                    cellFixedBg: '#dce9f5',
-                    cellFixedColor: '#1a3a52',
-                    cellUserColor: '#0066cc',
-                    primary: '#0066cc',
-                    accent: '#0099ff',
-                    success: '#00aa66',
-                    danger: '#ff3333'
-                }
-            },
-            sunset: {
-                name: 'Sunset Orange',
-                colors: {
-                    bg: '#fff5f0',
-                    panel: '#ffe8dc',
-                    text: '#663300',
-                    textBright: '#994d33',
-                    textDim: '#cc7a4d',
-                    dim: '#ff9966',
-                    neon: '#ff6b35',
-                    cyan: '#ff9344',
-                    amber: '#ffa64d',
-                    red: '#e53935',
-                    cellBg: '#fffcf9',
-                    cellFixedBg: '#ffe8dc',
-                    cellFixedColor: '#663300',
-                    cellUserColor: '#ff6b35',
-                    primary: '#ff6b35',
-                    accent: '#ffa64d',
-                    success: '#ff9344',
-                    danger: '#e53935'
-                }
-            }
-        };
-
-        function loadTheme() {
-            const themeName = localStorage.getItem(THEME_KEY) || 'darkblue';
-            const theme = THEMES[themeName];
-            if (!theme) {
-                localStorage.setItem(THEME_KEY, 'darkblue');
-                return THEMES.darkblue;
-            }
-            return theme;
-        }
-
-        function applyTheme(themeName) {
-            const theme = THEMES[themeName];
-            if (!theme) return;
-            
-            const root = document.documentElement;
-            Object.entries(theme.colors).forEach(([key, value]) => {
-                root.style.setProperty(`--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`, value);
-            });
-            
-            localStorage.setItem(THEME_KEY, themeName);
-        }
-
-        function renderThemeSelector() {
-            const currentTheme = localStorage.getItem(THEME_KEY) || 'darkblue';
-            
-            // HTMLの設定画面のボタンを更新
-            Object.keys(THEMES).forEach(key => {
-                const btn = document.getElementById(`theme-${key}`);
-                if (btn) {
-                    btn.classList.toggle('active', key === currentTheme);
-                }
-            });
-        }
-
-        function setTheme(themeName) {
-            applyTheme(themeName);
-            renderThemeSelector();
-        }
-
-        function openSettings() {
-            openSettingsMenu();
-        }
-
-        function openSettingsMenu() {
-            if (menuScreen) menuScreen.style.display = 'none';
-            if (settingsScreen) settingsScreen.style.display = 'flex';
-            renderThemeSelector();
-        }
-
-        function closeSettingsMenu() {
-            if (settingsScreen) settingsScreen.style.display = 'none';
-        }
-
-        function backToMenuFromSettings() {
-            closeSettingsMenu();
-            if (menuScreen) menuScreen.style.display = 'flex';
-        }
-
-        // ===== ゲーム統計機能 =====
-        function loadStats() {
-            try {
-                return JSON.parse(localStorage.getItem(STATS_KEY)) || initializeStats();
-            } catch (e) {
-                return initializeStats();
-            }
-        }
-
-        function initializeStats() {
-            return {
-                totalPlays: 0,
-                totalCompletions: 0,
-                totalPlayTimeSeconds: 0,
-                difficultyStats: {
-                    easy: { plays: 0, completions: 0, totalTimeSeconds: 0, totalHintUsed: 0, totalMissCount: 0 },
-                    normal: { plays: 0, completions: 0, totalTimeSeconds: 0, totalHintUsed: 0, totalMissCount: 0 },
-                    hard: { plays: 0, completions: 0, totalTimeSeconds: 0, totalHintUsed: 0, totalMissCount: 0 },
-                    expert: { plays: 0, completions: 0, totalTimeSeconds: 0, totalHintUsed: 0, totalMissCount: 0 }
-                }
-            };
-        }
-
-        function saveStats(stats) {
-            localStorage.setItem(STATS_KEY, JSON.stringify(stats));
-        }
-
-        function recordGamePlay(difficulty) {
-            if (!difficulty) return;
-            const stats = loadStats();
-            stats.totalPlays++;
-            stats.difficultyStats[difficulty].plays++;
-            saveStats(stats);
-        }
-
-        function recordGameCompletion(difficulty, timeSeconds, hintsUsed, missCount) {
-            if (!difficulty || hintUsedThisPuzzle) return; // ヒント使用時はカウント対象外
-            const stats = loadStats();
-            stats.totalCompletions++;
-            stats.totalPlayTimeSeconds += timeSeconds;
-            const dStats = stats.difficultyStats[difficulty];
-            dStats.completions++;
-            dStats.totalTimeSeconds += timeSeconds;
-            dStats.totalHintUsed += hintsUsed;
-            dStats.totalMissCount += missCount;
-            saveStats(stats);
-        }
-
-        function getAverageTime(difficulty) {
-            const stats = loadStats();
-            const dStats = stats.difficultyStats[difficulty];
-            if (dStats.completions === 0) return 0;
-            return Math.round(dStats.totalTimeSeconds / dStats.completions);
-        }
-
-        function getHintUsageRate(difficulty) {
-            const stats = loadStats();
-            const dStats = stats.difficultyStats[difficulty];
-            if (dStats.completions === 0) return 0;
-            return Math.round((dStats.totalHintUsed / dStats.completions) * 100) / 100;
-        }
-
-        function renderMenuHighscores() {
-            if (!menuHighscores) return;
-            const bestTimes = loadBestTimes();
-            menuHighscores.innerHTML = '';
-            Object.keys(DIFFICULTY_LABELS).forEach(diff => {
-                const key = diff;
-                const val = bestTimes[key];
-                const div = document.createElement('div');
-                div.classList.add('menu-score-item');
-                const label = document.createElement('span');
-                label.classList.add('menu-score-label');
-                label.innerText = DIFFICULTY_LABELS[diff];
-                const value = document.createElement('span');
-                value.classList.add('menu-score-value');
-                value.innerText = (val !== undefined) ? formatTime(val) : '--:--';
-                div.appendChild(label);
-                div.appendChild(value);
-                menuHighscores.appendChild(div);
-            });
-        }
-
-        function renderMenuStats() {
-            if (!menuStats) return;
-            const stats = loadStats();
-            menuStats.innerHTML = '';
-
-            // 総合統計
-            const clearRate = stats.totalPlays === 0 ? 0 : Math.round((stats.totalCompletions / stats.totalPlays) * 100);
-            const totalHours = Math.floor(stats.totalPlayTimeSeconds / 3600);
-            const totalMins = Math.floor((stats.totalPlayTimeSeconds % 3600) / 60);
-
-            const rows = [
-                { label: 'プレイ数', value: String(stats.totalPlays) },
-                { label: 'クリア数', value: String(stats.totalCompletions) },
-                { label: 'クリア率', value: `${clearRate}%` },
-                { label: '総プレイ時間', value: `${totalHours}h ${totalMins}m` }
-            ];
-
-            rows.forEach(row => {
-                const div = document.createElement('div');
-                div.classList.add('menu-stat-row');
-                const label = document.createElement('span');
-                label.classList.add('menu-stat-label');
-                label.innerText = row.label;
-                const value = document.createElement('span');
-                value.classList.add('menu-stat-value');
-                value.innerText = row.value;
-                div.appendChild(label);
-                div.appendChild(value);
-                menuStats.appendChild(div);
-            });
-
-            // 難易度別統計
-            Object.keys(DIFFICULTY_LABELS).forEach(diff => {
-                const dStats = stats.difficultyStats[diff];
-                const dClearRate = dStats.plays === 0 ? 0 : Math.round((dStats.completions / dStats.plays) * 100);
-                const avgTime = getAverageTime(diff);
-                const hintRate = getHintUsageRate(diff);
-
-                const statDiv = document.createElement('div');
-                statDiv.style.borderTop = '1px solid var(--dim)';
-                statDiv.style.marginTop = '8px';
-                statDiv.style.paddingTop = '8px';
-
-                const title = document.createElement('div');
-                title.style.color = 'var(--amber)';
-                title.style.fontSize = '0.65rem';
-                title.style.marginBottom = '4px';
-                title.innerText = DIFFICULTY_LABELS[diff];
-                statDiv.appendChild(title);
-
-                const dRows = [
-                    { label: 'プレイ数', value: String(dStats.plays) },
-                    { label: 'クリア率', value: `${dClearRate}%` },
-                    { label: '平均時間', value: avgTime > 0 ? formatTime(avgTime) : '--:--' },
-                    { label: 'ヒント平均', value: `${hintRate}回` },
-                    { label: 'ミス平均', value: dStats.completions > 0 ? String((dStats.totalMissCount / dStats.completions).toFixed(1)) : '0' }
-                ];
-
-                dRows.forEach(row => {
-                    const div = document.createElement('div');
-                    div.classList.add('menu-stat-row');
-                    div.style.paddingLeft = '8px';
-                    const label = document.createElement('span');
-                    label.classList.add('menu-stat-label');
-                    label.style.fontSize = '0.6rem';
-                    label.innerText = row.label;
-                    const value = document.createElement('span');
-                    value.classList.add('menu-stat-value');
-                    value.style.fontSize = '0.6rem';
-                    value.innerText = row.value;
-                    div.appendChild(label);
-                    div.appendChild(value);
-                    statDiv.appendChild(div);
-                });
-
-                menuStats.appendChild(statDiv);
-            });
-        }
-
-        function updateMenuUI() {
-            renderMenuHighscores();
-            renderMenuStats();
-            if (menuMissMode) menuMissMode.checked = missLimitMode;
-        }
-
-        function startGameWithDifficulty(difficulty) {
-            generateSudoku(difficulty);
-            closeMenuAndStartGame();
-        }
-
-        function closeMenuAndStartGame() {
-            if (menuScreen) menuScreen.style.display = 'none';
-            if (gameContainer) gameContainer.style.display = 'flex';
-        }
-
-        function backToMenu() {
-            if (isPlayMode) {
-                if (!confirm('ゲーム中です。メニューに戻りますか？')) return;
-                isPlayMode = false;
-                stopTimer();
-            }
-            if (menuScreen) menuScreen.style.display = 'flex';
-            if (gameContainer) gameContainer.style.display = 'none';
-            updateMenuUI();
-        }
-
-        function updateMenuSettings() {
-            if (!menuMissMode) return;
-            missLimitMode = menuMissMode.checked;
-            localStorage.setItem(MISS_MODE_KEY, missLimitMode ? 'on' : 'off');
-        }
-
-        function resetAllStats() {
-            if (confirm('統計情報を本当にリセットしますか？')) {
-                localStorage.setItem(STATS_KEY, JSON.stringify(initializeStats()));
-                updateMenuUI();
-                alert('統計情報がリセットされました。');
-            }
-        }
-
-        function openSettingsMenu() {
-            const settingsScreen = document.getElementById('settings-screen');
-            if (settingsScreen) {
-                settingsScreen.style.display = 'flex';
-                renderThemeSelector();
-            }
-        }
-
-        function closeSettingsMenu() {
-            const settingsScreen = document.getElementById('settings-screen');
-            if (settingsScreen) {
-                settingsScreen.style.display = 'none';
-            }
-        }
-
-        // ===== ヒント機能 =====
-        const HINT_LIMIT = 3;
-        let solvedBoard = null;      // 自動生成時の完成解（正解データ）。編集/読込問題ではnull
-        let hintsUsed = 0;
-        let hintUsedThisPuzzle = false; // trueの間はベストタイム更新を無効化
-
-        function resetHints() {
-            hintsUsed = 0;
-            hintUsedThisPuzzle = false;
-            updateHintUI();
-        }
-
-        function updateHintUI() {
-            if (!btnHint) return;
-            if (hintCountSpan) hintCountSpan.innerText = String(HINT_LIMIT - hintsUsed);
-            if (hintMaxSpan) hintMaxSpan.innerText = String(HINT_LIMIT);
-            const disabled = !solvedBoard || hintsUsed >= HINT_LIMIT || !isPlayMode || isPaused;
-            btnHint.disabled = disabled;
-        }
-
-        function useHint() {
-            if (isPaused) return;
-            if (!isPlayMode) return;
-            if (!solvedBoard) {
-                errorText.innerText = "!! この問題ではヒントは使えません";
-                return;
-            }
-            if (hintsUsed >= HINT_LIMIT) return;
-
-            // ヒント対象マス: 選択中のマスがあり、未確定・未入力ならそこを使う。
-            // なければ、空いている最初のマスを自動選択する。
-            let targetCell = null;
-            if (selectedCell && !selectedCell.classList.contains('fixed') && getCellValue(selectedCell) === "") {
-                targetCell = selectedCell;
-            } else {
-                targetCell = cellsArray.find(cell => !cell.classList.contains('fixed') && getCellValue(cell) === "");
-            }
-
-            if (!targetCell) {
-                errorText.innerText = "!! ヒントを入れられるマスがありません";
-                return;
-            }
-
-            const idx = parseInt(targetCell.dataset.index);
-            const r = Math.floor(idx / 9), c = idx % 9;
-            const answer = solvedBoard[r][c];
-
-            pushUndo(targetCell);
-            targetCell.memoValues = Array(10).fill(false);
-            renderMemo(targetCell);
-            setCellValue(targetCell, answer);
-            targetCell.classList.add('user-input', 'hint-input');
-
-            hintsUsed++;
-            hintUsedThisPuzzle = true;
-            updateHintUI();
-            updateCounts();
-
-            if (selectedCell) selectedCell.classList.remove('selected');
-            selectedCell = targetCell;
-            targetCell.classList.add('selected');
-            getHighlightTargetAndTrigger(targetCell);
-
-            // ヒントもミス扱いとしてカウントする
-            incrementMissCount();
-
-            // ヒントで最後のマスが埋まりクリアになるケースにも対応
-            if (isPlayMode && checkGameClear()) {
-                finishGameClear();
-            }
-        }
-
-        function loadBestTimes() {
-            try {
-                return JSON.parse(localStorage.getItem(BEST_TIME_KEY)) || {};
-            } catch (e) {
-                return {};
-            }
-        }
-
-        function saveBestTimes(data) {
-            localStorage.setItem(BEST_TIME_KEY, JSON.stringify(data));
-        }
-
-        // モードキー: 通常は難易度そのまま、ミス制限モードは "_miss" を付けて別記録にする
-        function bestTimeKey(difficulty, missMode) {
-            return missMode ? `${difficulty}_miss` : difficulty;
-        }
-
-        function formatTime(totalSeconds) {
-            const minutes = Math.floor(totalSeconds / 60);
-            const seconds = totalSeconds % 60;
-            return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }
-
-        // クリア時に呼ぶ。ベスト更新なら true を返す
-        function tryUpdateBestTime(difficulty, missMode, totalSeconds) {
-            if (!difficulty) return false;
-            const data = loadBestTimes();
-            const key = bestTimeKey(difficulty, missMode);
-            const prev = data[key];
-            if (prev === undefined || totalSeconds < prev) {
-                data[key] = totalSeconds;
-                saveBestTimes(data);
-                renderBestTimeList();
-                return true;
-            }
-            return false;
-        }
-
-        function renderBestTimeList() {
-            if (!bestTimeList) return;
-            const data = loadBestTimes();
-            const suffix = missLimitMode ? '_miss' : '';
-            bestTimeList.innerHTML = '';
-            Object.keys(DIFFICULTY_LABELS).forEach(diff => {
-                const key = diff + suffix;
-                const val = data[key];
-                const item = document.createElement('div');
-                item.classList.add('best-time-item');
-                const label = document.createElement('span');
-                label.classList.add('label');
-                label.innerText = DIFFICULTY_LABELS[diff];
-                const value = document.createElement('span');
-                value.classList.add('value');
-                value.innerText = (val !== undefined) ? formatTime(val) : '--:--';
-                item.appendChild(label);
-                item.appendChild(value);
-                bestTimeList.appendChild(item);
-            });
-        }
-
-        function updateMissToggleUI() {
-            if (!btnMissToggle) return;
-            btnMissToggle.innerText = `ミス制限モード: ${missLimitMode ? 'ON' : 'OFF'} (3ミスでOVER)`;
-            btnMissToggle.classList.toggle('on', missLimitMode);
-            renderBestTimeList();
-        }
-
-        function toggleMissLimitMode() {
-            if (isPlayMode) return; // プレイ中は切り替え不可
-            missLimitMode = !missLimitMode;
-            localStorage.setItem(MISS_MODE_KEY, missLimitMode ? 'on' : 'off');
-            updateMissToggleUI();
-        }
-
-        function resetMissCount() {
-            missCount = 0;
-            if (missCountSpan) missCountSpan.innerText = '0';
-            if (missMaxSpan) missMaxSpan.innerText = String(MISS_LIMIT);
-            if (missCounterEl) missCounterEl.style.display = missLimitMode ? 'block' : 'none';
-        }
-
-        function incrementMissCount() {
-            if (!missLimitMode || !isPlayMode) return;
-            missCount++;
-            if (missCountSpan) missCountSpan.innerText = String(missCount);
-            if (missCount >= MISS_LIMIT) {
-                triggerGameOver();
-            }
-        }
-
-        function triggerGameOver() {
-            stopTimer();
-            isPlayMode = false;
-            isPaused = false;
-            if (selectedCell) selectedCell.classList.remove('selected');
-            selectedCell = null;
-            clearAllHighlights();
-
-            gameoverTimeSpan.innerText = timerDisplay.innerText;
-            toggleUIVisibility(true);
-            modeToggle.innerText = "問題を確定してプレイ開始";
-            modeToggle.style.display = "inline-block";
-            btnPause.style.display = "none";
-            modeText.innerText = "MODE: 問題を入力中";
-            missCounterEl.style.display = 'none';
-
-            setTimeout(() => {
-                gameoverScreen.style.display = 'flex';
-            }, 300);
-        }
-
-        function retryAfterGameOver() {
-            gameoverScreen.style.display = 'none';
-            if (!currentDifficulty) return;
-            generateSudoku(currentDifficulty);
-
-            // 新しい問題を確定し、そのままプレイモードへ
-            isPlayMode = true;
-            modeToggle.innerText = "ギブアップ";
-            modeToggle.style.background = "var(--panel)";
-            toggleUIVisibility(false);
-            btnPause.style.display = "inline-block";
-            btnHint.style.display = "inline-block";
-            resetMissCount();
-            updateHintUI();
-            startTimer();
-        }
 
         // アンドゥ用の入力履歴スタック。1手ごとに変更前の状態を積んでおき、
         // アンドゥ時に該当マスへ丸ごと書き戻すだけのシンプルな実装。
@@ -861,7 +189,6 @@ const titleEl = document.getElementById('main-title');
 
         function generateSudoku(difficulty) {
             if (isPlayMode) return;
-            currentDifficulty = difficulty;
 
             cellsArray.forEach(cell => {
                 setCellValue(cell, "");
@@ -908,17 +235,11 @@ const titleEl = document.getElementById('main-title');
                 }
             });
 
-            // ヒント用に完成解を保存（generateSudokuで生成した問題のみ対象）
-            solvedBoard = solved;
-
             errorText.innerText = "";
             clearAllHighlights();
             clearUndoStack();
             resetTimer();
             updateCounts();
-            resetMissCount();
-            resetHints();
-            renderBestTimeList();
         }
 
         function savePuzzleCustom() {
@@ -995,9 +316,6 @@ const titleEl = document.getElementById('main-title');
             const puzzleData = customSaves[name];
             if (!puzzleData) return;
 
-            currentDifficulty = null; // お気に入り読込はベストタイム記録対象外
-            solvedBoard = null;       // ヒント機能は使えない
-
             cellsArray.forEach((cell, index) => {
                 const data = puzzleData[index];
                 setCellValue(cell, data.text || "");
@@ -1022,7 +340,6 @@ const titleEl = document.getElementById('main-title');
             modeText.innerText = "MODE: 問題を入力中";
             resetTimer();
             updateCounts();
-            missCounterEl.style.display = 'none';
             closeLoadModal();
             alert(`[${name}] を読み込みました`);
         }
@@ -1150,36 +467,6 @@ const titleEl = document.getElementById('main-title');
             }
         }
 
-        function finishGameClear() {
-            stopTimer();
-            if (selectedCell) selectedCell.classList.remove('selected');
-            selectedCell = null;
-            clearAllHighlights();
-
-            const timeText = timerDisplay.innerText;
-            finalTimeSpan.innerText = timeText;
-
-            // ベストタイム判定（自動生成問題かつヒント未使用の場合のみ対象）
-            const totalSeconds = Math.floor(elapsedTime / 1000);
-            const isNewBest = !hintUsedThisPuzzle && tryUpdateBestTime(currentDifficulty, missLimitMode, totalSeconds);
-            bestTimeUpdateSpan.style.display = isNewBest ? 'block' : 'none';
-
-            // 統計情報を記録
-            recordGameCompletion(currentDifficulty, totalSeconds, hintsUsed, missCount);
-
-            isPlayMode = false;
-            missCounterEl.style.display = 'none';
-            updateHintUI();
-            toggleUIVisibility(true);
-            btnPause.style.display = "none";
-
-            // クリア画面と紙吹雪を起動
-            setTimeout(() => {
-                clearScreen.style.display = 'flex';
-                launchConfetti();
-            }, 300);
-        }
-
         function pressMainNumber(num) {
             if (isPaused) return;
             if (!selectedCell || (isPlayMode && selectedCell.classList.contains('fixed'))) return;
@@ -1191,7 +478,7 @@ const titleEl = document.getElementById('main-title');
 
                 pushUndo(selectedCell);
                 setCellValue(selectedCell, "");
-                selectedCell.classList.remove('fixed', 'user-input', 'hint-input');
+                selectedCell.classList.remove('fixed', 'user-input');
                 selectedCell.memoValues = Array(10).fill(false);
                 renderMemo(selectedCell);
                 updateCounts();
@@ -1203,25 +490,7 @@ const titleEl = document.getElementById('main-title');
                 errorText.innerText = "!! 数字が重複しています";
                 selectedCell.classList.add('invalid-flash');
                 setTimeout(() => { selectedCell.classList.remove('invalid-flash'); }, 400);
-                incrementMissCount();
                 return;
-            }
-
-            // ===== リアルタイム正解判定 =====
-            if (solvedBoard) {
-                const row = parseInt(selectedCell.dataset.row);
-                const col = parseInt(selectedCell.dataset.col);
-                const correctAnswer = solvedBoard[row][col];
-                
-                if (num !== correctAnswer) {
-                    // 間違い：エラーメッセージを表示して入力を受け付けない
-                    errorText.innerText = `✗ 正解ではありません（正解: ${correctAnswer}）`;
-                    selectedCell.classList.add('invalid-flash');
-                    setTimeout(() => { selectedCell.classList.remove('invalid-flash'); }, 400);
-                    incrementMissCount();
-                    return; // 入力しない
-                }
-                // 正解の場合はそのまま続行
             }
 
             pushUndo(selectedCell);
@@ -1232,11 +501,25 @@ const titleEl = document.getElementById('main-title');
             if (!isPlayMode) {
                 selectedCell.classList.add('fixed');
             } else {
-                selectedCell.classList.remove('hint-input');
                 selectedCell.classList.add('user-input');
                 
                 if (checkGameClear()) {
-                    finishGameClear();
+                    stopTimer();
+                    if (selectedCell) selectedCell.classList.remove('selected');
+                    selectedCell = null;
+                    clearAllHighlights();
+                    
+                    const timeText = timerDisplay.innerText;
+                    finalTimeSpan.innerText = timeText;
+                    
+                    toggleUIVisibility(true);
+                    btnPause.style.display = "none";
+                    
+                    // クリア画面と紙吹雪を起動
+                    setTimeout(() => { 
+                        clearScreen.style.display = 'flex'; 
+                        launchConfetti();
+                    }, 300);
                 }
             }
             updateCounts();
@@ -1387,13 +670,9 @@ const titleEl = document.getElementById('main-title');
                 isPlayMode = true;
                 modeToggle.innerText = "ギブアップ";
                 modeToggle.style.background = "var(--panel)";
-                recordGamePlay(currentDifficulty);
                 startTimer();
                 toggleUIVisibility(false);
                 btnPause.style.display = "inline-block";
-                btnHint.style.display = solvedBoard ? "inline-block" : "none";
-                resetMissCount();
-                updateHintUI();
             } else {
                 isPlayMode = false;
                 modeToggle.innerText = "問題を確定してプレイ開始";
@@ -1402,9 +681,6 @@ const titleEl = document.getElementById('main-title');
                 stopTimer();
                 toggleUIVisibility(true);
                 btnPause.style.display = "none";
-                btnHint.style.display = "none";
-                missCounterEl.style.display = 'none';
-                updateHintUI();
             }
         });
 
@@ -1421,7 +697,7 @@ const titleEl = document.getElementById('main-title');
                 errorText.innerText = "";
                 clearAllHighlights();
                 clearUndoStack();
-                if (isPlayMode) { resetTimer(); startTimer(); resetMissCount(); } else { resetTimer(); }
+                if (isPlayMode) { resetTimer(); startTimer(); } else { resetTimer(); }
                 updateCounts();
             }
         });
@@ -1449,20 +725,15 @@ const titleEl = document.getElementById('main-title');
                 modeText.innerText = "MODE: 問題を入力中";
                 resetTimer();
                 updateCounts();
-                currentDifficulty = null;
-                solvedBoard = null;
-                missCounterEl.style.display = 'none';
             }
         });
 
         updateCounts();
         updateUndoButtonState();
-        updateMissToggleUI();
-        updateMenuUI();
-        
-        // テーマの初期化
-        const currentTheme = loadTheme();
-        applyTheme(localStorage.getItem(THEME_KEY) || 'darkblue');
-        
-        if (menuScreen) menuScreen.style.display = 'flex';
-        if (gameContainer) gameContainer.style.display = 'none';
+// ── PWA: Service Worker 登録 ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .catch(err => console.error('SW登録失敗:', err));
+  });
+}
